@@ -55,8 +55,8 @@
     thead.insertAdjacentHTML('beforeend', `
       <tr>
         <th class="delete">Удалить</th>
-        <th>Имя</th>
-        <th>Фамилия</th>
+        <th class="name">Имя</th>
+        <th class="surname">Фамилия</th>
         <th>Телефон</th>
         <th></th>
       </tr>
@@ -156,12 +156,14 @@
       list: table.tbody,
       logo,
       btnAdd: buttonGroup.btns[0],
+      btnDel: buttonGroup.btns[1],
       formOverlay: form.overlay,
       form: form.form,
     };
   };
   const createRow = ({name: firstName, surname, phone}) => {
     const tr = document.createElement('tr');
+    tr.classList.add('contact');
     const tdDel = document.createElement('td');
     tdDel.classList.add('delete');
     const buttonDel = document.createElement('button');
@@ -202,17 +204,66 @@
   const init = (selectorApp, title) => {
     const app = document.querySelector(selectorApp);
     const phoneBook = renderPhoneBook(app, title);
-    const {list, logo, btnAdd, formOverlay, form} = phoneBook;
+    const {
+      list,
+      logo,
+      btnAdd,
+      formOverlay,
+      form,
+      btnDel,
+    } = phoneBook;
     const allRow = renderContacts(list, data);
     hoverRow(allRow, logo);
     btnAdd.addEventListener('click', () => {
       formOverlay.classList.add('is-visible');
     });
-    form.addEventListener('click', event => {
-      event.stopPropagation();
+    formOverlay.addEventListener('click', e => {
+      const target = e.target;
+      if (target === formOverlay ||
+        target.classList.contains('close')) {
+        formOverlay.classList.remove('is-visible');
+      }
     });
-    formOverlay.addEventListener('click', () => {
-      formOverlay.classList.remove('is-visible');
+    btnDel.addEventListener('click', () => {
+      document.querySelectorAll('.delete').forEach(del => {
+        del.classList.toggle('is-visible');
+      });
+    });
+    list.addEventListener('click', e => {
+      const target = e.target;
+      if (target.closest('.del-icon')) {
+        target.closest('.contact').remove();
+      }
+    });
+    // Сортировка по имени
+    const SortArrayName = (x, y) => x.name.localeCompare(y.name);
+    // Шапка таблицы, пункт "имя"
+    const nameHeadTab = document.querySelector('.name');
+    // клик по пункту "имя"
+    nameHeadTab.addEventListener('click', () => {
+      // получаем все контакты
+      const contact = document.querySelectorAll('.contact');
+      // удаляем не сортированый список
+      contact.forEach(element => {
+        element.remove();
+      });
+      // сортируем список и рендерим его
+      renderContacts(list, data.sort(SortArrayName));
+    });
+    // Сортировка по фамилии
+    const SortArraySur = (x, y) => x.surname.localeCompare(y.surname);
+    // Шапка таблицы, пункт "Фамилия"
+    const surnameTab = document.querySelector('.surname');
+    // клик по пункту "Фамилия"
+    surnameTab.addEventListener('click', () => {
+      // получаем все контакты
+      const contact = document.querySelectorAll('.contact');
+      // удаляем не сортированый список
+      contact.forEach(element => {
+        element.remove();
+      });
+      // сортируем список и рендерим его
+      renderContacts(list, data.sort(SortArraySur));
     });
   };
   window.phoneBookInit = init;
