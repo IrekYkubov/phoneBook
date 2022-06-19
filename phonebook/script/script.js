@@ -1,9 +1,6 @@
 'use strict';
 
 {
-  const addContactData = contact => {
-    data.push(contact);
-  };
   const createContainer = () => {
     const container = document.createElement('div');
     container.classList.add('container');
@@ -131,6 +128,23 @@
     p.textContent = `Все права защищены ${title}`;
     return p;
   };
+  const getStorage = (key) => {
+    const localItems = localStorage.getItem(key);
+    if (localItems === '') {
+      return [];
+    }
+    return JSON.parse(localItems);
+  };
+  const setStorage = (key, contObj) => {
+    localStorage.setItem(key, contObj);
+  };
+
+  const removeStorage = (nubmberDel) => {
+    const allItem = getStorage('contact');
+    const delItem = allItem.filter(arrItem => arrItem.phone !== nubmberDel);
+    setStorage('contact', JSON.stringify(delItem));
+  };
+
   const renderPhoneBook = (app, title) => {
     const header = createHeader();
     const logo = createLogo(title);
@@ -232,10 +246,14 @@
     list.addEventListener('click', e => {
       const target = e.target;
       if (target.closest('.del-icon')) {
+        const delNumber =
+        target.closest('.contact').querySelector('a').textContent;
+        removeStorage(delNumber);
         target.closest('.contact').remove();
       }
     });
   };
+
   const addContactPage = (contact, list) => {
     list.append(createRow(contact));
   };
@@ -245,8 +263,10 @@
       const formData = new FormData(e.target);
 
       const newContact = Object.fromEntries(formData);
-      addContactPage(newContact, list);
-      addContactData(newContact);
+      const listData = getStorage('contact');
+      listData.push(newContact);
+      setStorage('contact', JSON.stringify(listData));
+      addContactPage(getStorage('contact'), list);
       form.reset();
       closeModal();
     });
@@ -261,7 +281,7 @@
       form,
       btnDel,
     } = renderPhoneBook(app, title);
-    const allRow = renderContacts(list, data);
+    const allRow = renderContacts(list, getStorage('contact'));
     const {closeModal} = modalControl(btnAdd, formOverlay);
     hoverRow(allRow, logo);
     deleteControl(btnDel, list);
@@ -279,7 +299,7 @@
         element.remove();
       });
       // сортируем список и рендерим его
-      renderContacts(list, data.sort(SortArrayName));
+      renderContacts(list, getStorage('contact').sort(SortArrayName));
     });
     // Сортировка по фамилии
     const SortArraySur = (x, y) => x.surname.localeCompare(y.surname);
@@ -294,7 +314,7 @@
         element.remove();
       });
       // сортируем список и рендерим его
-      renderContacts(list, data.sort(SortArraySur));
+      renderContacts(list, getStorage('contact').sort(SortArraySur));
     });
   };
   window.phoneBookInit = init;
