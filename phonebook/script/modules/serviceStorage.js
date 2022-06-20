@@ -1,10 +1,6 @@
-const getStorage = (key) => {
-  const localItems = localStorage.getItem(key);
-  if (localItems === '') {
-    return [];
-  }
-  return JSON.parse(localItems);
-};
+const getStorage = (key) => (
+  localStorage.getItem(key) ? JSON.parse(localStorage.getItem(key)) : []
+);
 const setStorage = (key, contObj) => {
   localStorage.setItem(key, contObj);
 };
