@@ -1,5 +1,6 @@
 import createElements from './createElements.js';
 import serviceStorage from './serviceStorage.js';
+import {renderContacts} from './render.js';
 
 const {createRow} = createElements;
 const {
@@ -56,7 +57,7 @@ const deleteControl = (btnDel, list) => {
 };
 
 const addContactPage = (contact, list) => {
-  list.append(createRow(contact));
+  renderContacts(list, contact);
 };
 const formControl = (form, list, closeModal) => {
   form.addEventListener('submit', e => {
@@ -65,6 +66,12 @@ const formControl = (form, list, closeModal) => {
 
     const newContact = Object.fromEntries(formData);
     const listData = getStorage('contact');
+    if (listData !== []) {
+      const contact = document.querySelectorAll('.contact');
+      contact.forEach(element => {
+        element.remove();
+      });
+    }
     listData.push(newContact);
     setStorage('contact', JSON.stringify(listData));
     addContactPage(getStorage('contact'), list);
