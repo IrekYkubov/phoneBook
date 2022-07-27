@@ -1,6 +1,6 @@
-import createElements from './createElements.js';
-import serviceStorage from './serviceStorage.js';
-import {renderContacts} from './render.js';
+import createElements from './createElements';
+import serviceStorage from './serviceStorage';
+import {renderContacts} from './render';
 
 const {createRow} = createElements;
 const {

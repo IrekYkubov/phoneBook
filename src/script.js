@@ -1,6 +1,6 @@
-import control from './modules/control.js';
-import {renderPhoneBook, renderContacts} from './modules/render.js';
-import serviceStorage from './modules/serviceStorage.js';
+import control from './script/control';
+import {renderPhoneBook, renderContacts} from './script/render';
+import serviceStorage from './script/serviceStorage';
 const {
   hoverRow,
   modalControl,
@@ -9,6 +9,8 @@ const {
 } = control;
 
 const {getStorage} = serviceStorage;
+
+import './scss/index.scss';
 
 {
   const init = (selectorApp, title) => {
@@ -58,4 +60,5 @@ const {getStorage} = serviceStorage;
     });
   };
   window.phoneBookInit = init;
+  window.phoneBookInit('#app', 'Ирек');
 }
